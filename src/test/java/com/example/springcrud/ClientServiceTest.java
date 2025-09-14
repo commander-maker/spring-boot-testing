@@ -43,7 +43,7 @@ class ClientServiceTest {
 
         // Act: call the service to create the client
         Client createdClient = clientService.createClient(client);
-        client.setId(10); // Or whatever dummy ID you like
+
 
 
         // Assert: check that the created client is returned with a valid ID
