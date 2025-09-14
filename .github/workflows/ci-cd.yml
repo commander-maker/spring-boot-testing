@@ -36,3 +36,7 @@ jobs:
 
       - name: Run All Tests
         run: mvn verify
+
+      - name: Install Chrome
+        run: sudo apt-get update && sudo apt-get install -y google-chrome-stable
+
