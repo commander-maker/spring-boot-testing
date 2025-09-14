@@ -36,7 +36,7 @@ class ClientServiceTest {
     }
 
     // Test for successful client creation
-    //@Test
+    @Test
     void testCreateClientSuccess() {
         // Arrange: mock the save operation to return the client
         when(clientRepository.save(any(Client.class))).thenReturn(client);
