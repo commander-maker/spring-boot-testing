@@ -40,3 +40,7 @@ jobs:
       - name: Install Chrome
         run: sudo apt-get update && sudo apt-get install -y google-chrome-stable
 
+      - name: Run Selenium Tests Headless
+        run: mvn test -Dheadless=true
+
+

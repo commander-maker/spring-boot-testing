@@ -2,55 +2,78 @@ package SeleniumTests;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
 import io.github.bonigarcia.wdm.WebDriverManager;
+import java.time.Duration;
 
 public class AddClientUITest {
 
     private WebDriver driver;
+    private WebDriverWait wait;
 
     @BeforeClass
     public void setup() {
-        // Automatically downloads and sets up ChromeDriver
         WebDriverManager.chromedriver().setup();
-
-        // Chrome headless options for CI
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless");               // Run without GUI
-        options.addArguments("--no-sandbox");             // Required for CI environments
-        options.addArguments("--disable-dev-shm-usage");  // Avoid memory issues in CI
+        // Remove headless to see the browser
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
 
-        // Initialize driver
         driver = new ChromeDriver(options);
+        wait = new WebDriverWait(driver, Duration.ofSeconds(15));
 
-        // Open the add-client page
-        driver.get("http://localhost:8080/add-client");
+        // Go directly to the AddClient page route if your app uses routing
+        driver.get("http://localhost:5173/"); // <-- adjust if needed
     }
 
     @Test
     public void testAddClient() {
-        // Fill in the form
-        driver.findElement(By.id("name")).sendKeys("John Doe");
-        driver.findElement(By.id("email")).sendKeys("john@example.com");
+        // Wait for the form container
+        WebElement formContainer = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".add-client-container"))
+        );
 
-        // Submit the form
-        driver.findElement(By.id("submit")).click();
+        // Wait until the Name input is clickable
+        WebElement nameInput = wait.until(
+                ExpectedConditions.elementToBeClickable(By.id("name"))
+        );
+        nameInput.sendKeys("John Doe");
 
-        // Verify confirmation message
-        String confirmation = driver.findElement(By.id("confirmation")).getText();
-        Assert.assertEquals(confirmation, "Client added successfully!");
+        WebElement emailInput = wait.until(
+                ExpectedConditions.elementToBeClickable(By.id("email"))
+        );
+        emailInput.sendKeys("jnh@example.com");
+
+        WebElement addressInput = wait.until(
+                ExpectedConditions.elementToBeClickable(By.id("address"))
+        );
+        addressInput.sendKeys("123 Street, City");
+
+        WebElement submitButton = wait.until(
+                ExpectedConditions.elementToBeClickable(By.id("submit"))
+        );
+        submitButton.click();
+
+        // Wait for confirmation message
+        WebElement confirmation = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".success-message"))
+        );
+
+        Assert.assertEquals(confirmation.getText(), "Client added successfully!");
     }
 
     @AfterClass
     public void tearDown() {
         if (driver != null) {
-            driver.quit(); // Close the browser
+            driver.quit();
         }
     }
 }
